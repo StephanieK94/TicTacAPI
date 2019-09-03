@@ -1,0 +1,114 @@
+openapi: 3.0.0
+# Added by API Auto Mocking Plugin
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/sketchen/TicTacToe/1.0.0
+info:
+  description: This is a first attempt at a Tic Tac Toe API
+  version: "1.0.0"
+  title: Tic Tac Toe API
+  contact:
+    email: stephanie.kitchen@serko.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: games
+    description: Calls for playing the game
+  - name: playerMove
+    description: Sets the player's move on the board
+paths:
+  /:
+    get:
+      tags:
+        - games
+      summary: Retrieves the game
+      operationId: retrieveGame
+      description: Retrieves the game state; including the board, the current player, and the winner
+      responses:
+        '200':
+          description: game matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+    delete:
+      tags:
+        - games
+      summary: Resets to a blank game
+      operationId: resetGame
+      description: Resets the board to a new blank game 
+      responses:
+        '205':
+          description: game reset
+  '/{player}':
+    post:
+      tags:
+        - playerMove
+      summary: Posts the current players
+      operationId: setPlayerMove
+      responses:
+        '200':
+          description: successful move set
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Player'
+        '400': 
+          description: invalid move
+      parameters: 
+        - name: player
+          in: path
+          required: true
+          description: The player that currently is playing the next move
+          schema:
+            $ref: '#/components/schemas/Player'
+components:
+  schemas:
+    Game:
+      type: object
+      required:
+        - board
+        - winner
+        - currentPlayer
+        - turnCount
+      properties:
+        board:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Piece'
+        winner:
+          $ref: '#/components/schemas/Player'
+        currentPlayer:
+          $ref: '#/components/schemas/Player'
+        turnCount:
+          type: integer
+          format: int64
+    Player:
+      type: object
+      required:
+        - symbol
+        - row
+        - column
+      properties:
+        symbol:
+          $ref: '#/components/schemas/Piece'
+        row:
+          type: number
+          format: int
+          example: 1, 2, or 3
+        column:
+          type: number
+          format: int
+          example: 1, 2, or 3
+    Piece:
+      type: string
+      enum:
+        - Empty
+        - X
+        - O
